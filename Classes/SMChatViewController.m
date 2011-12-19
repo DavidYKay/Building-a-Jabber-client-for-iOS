@@ -36,36 +36,37 @@
 	}
 	
 	return self;
-
 }
 
 - (void)viewDidLoad {
-	
+
   [super viewDidLoad];
-	self.tView.delegate = self;
-	self.tView.dataSource = self;
-	[self.tView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-	
-	messages = [[NSMutableArray alloc ] init];
-	
-	JabberClientAppDelegate *del = [self appDelegate];
-	del._messageDelegate = self;
-	[self.messageField becomeFirstResponder];
+  self.tView.delegate = self;
+  self.tView.dataSource = self;
+  [self.tView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+
+  self.messageField.delegate = self;
+
+  messages = [[NSMutableArray alloc ] init];
+
+  JabberClientAppDelegate *del = [self appDelegate];
+  del._messageDelegate = self;
+  [self.messageField becomeFirstResponder];
 
   //NSString *userID = [[NSUserDefaults standardUserDefaults] objectForKey:@"userID"];
-	NSString *userID = @"dk@localhost";
+  NSString *userID = @"dk@localhost";
   //XMPPJID *jid = [XMPPJID jidWithString:@"cesare@YOURSERVER"];
-	XMPPJID *jid = [XMPPJID jidWithString: userID];
-	
-	NSLog(@"Attempting TURN connection to %@", jid);
-	
-	TURNSocket *turnSocket = [[TURNSocket alloc] initWithStream:[self xmppStream] toJID:jid];
-	
-	[turnSockets addObject:turnSocket];
-	
-	[turnSocket startWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-	[turnSocket release];
-	
+  XMPPJID *jid = [XMPPJID jidWithString: userID];
+
+  NSLog(@"Attempting TURN connection to %@", jid);
+
+  TURNSocket *turnSocket = [[TURNSocket alloc] initWithStream:[self xmppStream] toJID:jid];
+
+  [turnSockets addObject:turnSocket];
+
+  [turnSocket startWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+  [turnSocket release];
+
 }
 
 - (void)turnSocket:(TURNSocket *)sender didSucceed:(GCDAsyncSocket *)socket {
@@ -81,6 +82,16 @@
 	NSLog(@"TURN Connection failed!");
 	[turnSockets removeObject:sender];
 	
+}
+
+#pragma mark - UITextFieldDelegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+  if (textField == self.messageField) {
+    [self sendMessage];
+    return YES;
+  }
+  return YES;
 }
 
 #pragma mark - Actions
