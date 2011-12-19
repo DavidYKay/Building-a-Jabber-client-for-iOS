@@ -13,21 +13,16 @@
 #import "SMMessageViewTableCell.h"
 
 @interface SMChatViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, SMMessageDelegate> {
-
-	UITextField		*messageField;
-	NSString		*chatWithUser;
-	UITableView		*tView;
-	NSMutableArray	*messages;
-	NSMutableArray *turnSockets;
-	
+  NSMutableArray *messages;
+  NSMutableArray *turnSockets;
 }
 
 @property (nonatomic,retain) IBOutlet UITextField *messageField;
 @property (nonatomic,retain) NSString *chatWithUser;
 @property (nonatomic,retain) IBOutlet UITableView *tView;
 
-- (id) initWithUser:(NSString *) userName;
-- (IBAction) sendMessage;
-- (IBAction) closeChat;
+- (id)initWithUser:(NSString *) userName;
+- (IBAction)sendMessage;
+- (IBAction)closeChat;
 
 @end

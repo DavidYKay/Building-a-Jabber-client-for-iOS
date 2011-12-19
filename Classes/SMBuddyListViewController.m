@@ -30,14 +30,14 @@
 
 
 - (void)viewDidLoad {
-	
-    [super viewDidLoad];
-	self.tView.delegate = self;
-	self.tView.dataSource = self;
-	JabberClientAppDelegate *del = [self appDelegate];
-	del._chatDelegate = self;
-	onlineBuddies = [[NSMutableArray alloc ] init];
-	
+
+  [super viewDidLoad];
+  self.tView.delegate = self;
+  self.tView.dataSource = self;
+  JabberClientAppDelegate *del = [self appDelegate];
+  del._chatDelegate = self;
+  onlineBuddies = [[NSMutableArray alloc] init];
+
 }
 
 
@@ -48,19 +48,12 @@
 	NSString *login = [[NSUserDefaults standardUserDefaults] objectForKey:@"userID"];
 	
 	if (login) {
-		
 		if ([[self appDelegate] connect]) {
-			
 			NSLog(@"show buddy list");
-			
 		}
-		
 	} else {
-		
 		[self showLogin];
-		
 	}
-	
 }
 
 - (IBAction) showLogin {
@@ -75,7 +68,6 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	
-	NSString *s = (NSString *) [onlineBuddies objectAtIndex:indexPath.row];
 	
 	static NSString *CellIdentifier = @"UserCellIdentifier";
 	
@@ -84,6 +76,7 @@
 		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
 	}
 	
+	NSString *s = (NSString *) [onlineBuddies objectAtIndex:indexPath.row];
 	cell.textLabel.text = s;
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	
@@ -92,53 +85,37 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	
 	return [onlineBuddies count];
-	
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	
 	return 1;
-	
 }
 
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	
 	NSString *userName = (NSString *) [onlineBuddies objectAtIndex:indexPath.row];
 	SMChatViewController *chatController = [[SMChatViewController alloc] initWithUser:userName];
 	[self presentModalViewController:chatController animated:YES];
-	
 }
-
 
 #pragma mark -
 #pragma mark Chat delegate
 
 - (void)newBuddyOnline:(NSString *)buddyName {
-	
 	if (![onlineBuddies containsObject:buddyName]) {
-	
 		[onlineBuddies addObject:buddyName];
 		[self.tView reloadData];
-		
 	}
-	
 }
 
 - (void)buddyWentOffline:(NSString *)buddyName {
-	
 	[onlineBuddies removeObject:buddyName];
 	[self.tView reloadData];
-	
 }
 
 - (void)didDisconnect {
-	
 	[onlineBuddies removeAllObjects];
 	[self.tView reloadData];
-	
 }
 
 - (IBAction) addBuddy {
@@ -148,15 +125,12 @@
 	
 }
 
-
-
 - (void)dealloc {
-	
-	[tView release];
-	[addBuddyView dealloc];
-	[buddyField dealloc];
-    [super dealloc];
-	
+  [tView release];
+  [addBuddyView dealloc];
+  [buddyField dealloc];
+
+  [super dealloc];
 }
 
 @end

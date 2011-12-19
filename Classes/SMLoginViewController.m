@@ -15,48 +15,48 @@
 
 
 - (void) viewDidLoad {
-	
-	[super viewDidLoad];
-	self.loginField.text = @"alterego@YOURSERVER";
-	self.passwordField.text = @"ciao";
-	
+
+  [super viewDidLoad];
+  self.loginField.text = @"name@server";
+  self.passwordField.text = @"abc";
+
 }
 
 - (IBAction) login {
-	
-	[[NSUserDefaults standardUserDefaults] setObject:self.loginField.text forKey:@"userID"];
-	[[NSUserDefaults standardUserDefaults] setObject:self.passwordField.text forKey:@"userPassword"];
-	[[NSUserDefaults standardUserDefaults] synchronize];
-	
-	[self dismissModalViewControllerAnimated:YES];
-	
+
+  [[NSUserDefaults standardUserDefaults] setObject:self.loginField.text forKey:@"userID"];
+  [[NSUserDefaults standardUserDefaults] setObject:self.passwordField.text forKey:@"userPassword"];
+  [[NSUserDefaults standardUserDefaults] synchronize];
+
+  [self dismissModalViewControllerAnimated:YES];
+
 }
 
 - (IBAction) hideLogin {
-	
-    [self dismissModalViewControllerAnimated:YES];
-    
+
+  [self dismissModalViewControllerAnimated:YES];
+
 }
 
 - (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc. that aren't in use.
+  // Releases the view if it doesn't have a superview.
+  [super didReceiveMemoryWarning];
+
+  // Release any cached data, images, etc. that aren't in use.
 }
 
 - (void)viewDidUnload {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+  [super viewDidUnload];
+  // Release any retained subviews of the main view.
+  // e.g. self.myOutlet = nil;
 }
 
 
 - (void)dealloc {
-	
-	[loginField dealloc];
-	[passwordField dealloc];
-    [super dealloc];
+
+  [loginField dealloc];
+  [passwordField dealloc];
+  [super dealloc];
 }
 
 

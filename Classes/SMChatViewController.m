@@ -14,6 +14,7 @@
 
 @synthesize messageField, chatWithUser, tView;
 
+#pragma mark - Convenience Methods (unnecessary)
 
 - (JabberClientAppDelegate *)appDelegate {
 	return (JabberClientAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -23,11 +24,14 @@
 	return [[self appDelegate] xmppStream];
 }
 
+#pragma mark - Initialization
+
 - (id) initWithUser:(NSString *) userName {
 
-	if (self = [super init]) {
+  if (self = [super init]) {
+    NSLog(@"Starting chat with friend: %@", userName);
 		
-		chatWithUser = userName; // @ missing
+		self.chatWithUser = userName; // @ missing
 		turnSockets = [[NSMutableArray alloc] init];
 	}
 	
@@ -37,7 +41,7 @@
 
 - (void)viewDidLoad {
 	
-    [super viewDidLoad];
+  [super viewDidLoad];
 	self.tView.delegate = self;
 	self.tView.dataSource = self;
 	[self.tView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -48,7 +52,10 @@
 	del._messageDelegate = self;
 	[self.messageField becomeFirstResponder];
 
-	XMPPJID *jid = [XMPPJID jidWithString:@"cesare@YOURSERVER"];
+  //NSString *userID = [[NSUserDefaults standardUserDefaults] objectForKey:@"userID"];
+	NSString *userID = @"dk@localhost";
+  //XMPPJID *jid = [XMPPJID jidWithString:@"cesare@YOURSERVER"];
+	XMPPJID *jid = [XMPPJID jidWithString: userID];
 	
 	NSLog(@"Attempting TURN connection to %@", jid);
 	
@@ -76,44 +83,40 @@
 	
 }
 
-
-
-#pragma mark -
-#pragma mark Actions
+#pragma mark - Actions
 
 - (IBAction) closeChat {
-
 	[self dismissModalViewControllerAnimated:YES];
 }
 
 - (IBAction)sendMessage {
-	
     NSString *messageStr = self.messageField.text;
 	
     if([messageStr length] > 0) {
-		
-        NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
-        [body setStringValue:messageStr];
-		
-        NSXMLElement *message = [NSXMLElement elementWithName:@"message"];
-        [message addAttributeWithName:@"type" stringValue:@"chat"];
-        [message addAttributeWithName:@"to" stringValue:chatWithUser];
-        [message addChild:body];
-		
-        [self.xmppStream sendElement:message];
-		
-		self.messageField.text = @"";
-		
 
-		NSMutableDictionary *m = [[NSMutableDictionary alloc] init];
-		[m setObject:[messageStr substituteEmoticons] forKey:@"msg"];
-		[m setObject:@"you" forKey:@"sender"];
-		[m setObject:[NSString getCurrentTime] forKey:@"time"];
-		
-		[messages addObject:m];
-		[self.tView reloadData];
-		[m release];
-		
+      NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
+      [body setStringValue:messageStr];
+
+      NSXMLElement *message = [NSXMLElement elementWithName:@"message"];
+      [message addAttributeWithName:@"type" stringValue:@"chat"];
+      [message addAttributeWithName:@"to" stringValue:self.chatWithUser];
+      [message addChild:body];
+
+      NSLog(@"Sending message: %@ to user: %@", messageStr, self.chatWithUser);
+
+      [self.xmppStream sendElement:message];
+
+      self.messageField.text = @"";
+
+      NSMutableDictionary *m = [[NSMutableDictionary alloc] init];
+      [m setObject:[messageStr substituteEmoticons] forKey:@"msg"];
+      [m setObject:@"you" forKey:@"sender"];
+      [m setObject:[NSString getCurrentTime] forKey:@"time"];
+
+      [messages addObject:m];
+      [self.tView reloadData];
+      [m release];
+
     }
 	
 	NSIndexPath *topIndexPath = [NSIndexPath indexPathForRow:messages.count-1 
@@ -124,15 +127,11 @@
 							  animated:YES];
 }
 
-
-#pragma mark -
-#pragma mark Table view delegates
+#pragma mark - Table view delegates
 
 static CGFloat padding = 20.0;
 
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	
 	
 	NSDictionary *s = (NSDictionary *) [messages objectAtIndex:indexPath.row];
 	
@@ -152,18 +151,14 @@ static CGFloat padding = 20.0;
 	CGSize size = [message sizeWithFont:[UIFont boldSystemFontOfSize:13]
 					  constrainedToSize:textSize 
 						  lineBreakMode:UILineBreakModeWordWrap];
-
 	
 	size.width += (padding/2);
-	
 	
 	cell.messageContentView.text = message;
 	cell.accessoryType = UITableViewCellAccessoryNone;
 	cell.userInteractionEnabled = NO;
 	
-
 	UIImage *bgImage = nil;
-	
 		
 	if ([sender isEqualToString:@"you"]) { // left aligned
 	
@@ -229,10 +224,7 @@ static CGFloat padding = 20.0;
 	
 }
 
-
-#pragma mark -
-#pragma mark Chat delegates
-
+#pragma mark - Chat delegates
 
 - (void)newMessageReceived:(NSDictionary *)messageContent {
 	
@@ -267,12 +259,11 @@ static CGFloat padding = 20.0;
 
 
 - (void)dealloc {
-	
-	[messageField dealloc];
-	[chatWithUser dealloc];
-	[tView dealloc];
-    [super dealloc];
-}
+  [messageField release];
+  [self.chatWithUser release];
+  [tView release];
 
+  [super dealloc];
+}
 
 @end

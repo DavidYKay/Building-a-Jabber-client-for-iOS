@@ -21,17 +21,17 @@
 @synthesize _messageDelegate;
 
 
+#pragma mark - Constants
+
+
+#pragma mark - Application Lifecyclce
+
 - (void)applicationWillResignActive:(UIApplication *)application {
-	
 	[self disconnect];
-	
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-	
-	//[self setupStream];
 	[self connect];
-	
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
@@ -42,13 +42,11 @@
     return YES;
 }
 
+#pragma mark - XMPP Public Methods
 
 - (void)setupStream {
-	
 	xmppStream = [[XMPPStream alloc] init];
 	[xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
-	
-	
 }
 
 - (void)goOnline {
@@ -62,7 +60,6 @@
 }
 
 - (BOOL)connect {
-	
 	[self setupStream];
 	
 	NSString *jabberID = [[NSUserDefaults standardUserDefaults] stringForKey:@"userID"];
@@ -72,9 +69,7 @@
 		return YES;
 	}
 	
-	
 	if (jabberID == nil || myPassword == nil) {
-		
 		return NO;
 	}
 	
@@ -100,92 +95,75 @@
 }
 
 - (void)disconnect {
-	
 	[self goOffline];
 	[xmppStream disconnect];
 	[_chatDelegate didDisconnect];
 }
 
-
-
-#pragma mark -
-#pragma mark XMPP delegates 
-
+#pragma mark - XMPP delegates 
 
 - (void)xmppStreamDidConnect:(XMPPStream *)sender {
-	
 	isOpen = YES;
 	NSError *error = nil;
 	[[self xmppStream] authenticateWithPassword:password error:&error];
-	
 }
 
 - (void)xmppStreamDidAuthenticate:(XMPPStream *)sender {
-	
 	[self goOnline];
-	
 }
 
-
 - (BOOL)xmppStream:(XMPPStream *)sender didReceiveIQ:(XMPPIQ *)iq {
-	
 	return NO;
-	
 }
 
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message {
-	
-	
 	NSString *msg = [[message elementForName:@"body"] stringValue];
-	NSString *from = [[message attributeForName:@"from"] stringValue];
+  NSString *from = [[message attributeForName:@"from"] stringValue];
 
-	NSMutableDictionary *m = [[NSMutableDictionary alloc] init];
-	[m setObject:msg forKey:@"msg"];
-	[m setObject:from forKey:@"sender"];
-	
-	[_messageDelegate newMessageReceived:m];
-	[m release];
-	
+  NSLog(@"didReceiveMessage: %@ fromUser: %@", 
+      msg, 
+      from
+      );
+  if (msg && from) {
+    NSMutableDictionary *m = [[NSMutableDictionary alloc] init];
+    [m setObject:msg forKey:@"msg"];
+    [m setObject:from forKey:@"sender"];
+
+    [_messageDelegate newMessageReceived:m];
+    [m release];
+  } else {
+    NSLog(@"Null message received!");
+  }
 }
 
 - (void)xmppStream:(XMPPStream *)sender didReceivePresence:(XMPPPresence *)presence {
-	
 	NSString *presenceType = [presence type]; // online/offline
 	NSString *myUsername = [[sender myJID] user];
-	NSString *presenceFromUser = [[presence from] user];
+  NSString *presenceFromUser = [[presence from] user];
+  NSString *hisDomain = presence.from.domain;
 	
 	if (![presenceFromUser isEqualToString:myUsername]) {
-		
 		if ([presenceType isEqualToString:@"available"]) {
-			
-			[_chatDelegate newBuddyOnline:[NSString stringWithFormat:@"%@@%@", presenceFromUser, @"YOURSERVER"]];
-			
+			[_chatDelegate newBuddyOnline:[NSString stringWithFormat:@"%@@%@", presenceFromUser, hisDomain]];
 		} else if ([presenceType isEqualToString:@"unavailable"]) {
-			
-			[_chatDelegate buddyWentOffline:[NSString stringWithFormat:@"%@@%@", presenceFromUser, @"YOURSERVER"]];
-			
+			[_chatDelegate buddyWentOffline:[NSString stringWithFormat:@"%@@%@", presenceFromUser, hisDomain]];
 		}
-		
 	}
-	
 }
-
 
 - (void)dealloc {
-	
-	[xmppStream removeDelegate:self];
-	[xmppRoster removeDelegate:self];
-	
-	[xmppStream disconnect];
-	[xmppStream release];
-	[xmppRoster release];
-	
-	[password release];
-	
-    [viewController release];
-    [window release];
-    [super dealloc];
-}
+  [xmppStream removeDelegate:self];
+  [xmppRoster removeDelegate:self];
 
+  [xmppStream disconnect];
+  [xmppStream release];
+  [xmppRoster release];
+
+  [password release];
+
+  [viewController release];
+  [window release];
+  [super dealloc];
+}
 
 @end
