@@ -12,7 +12,7 @@
 #import "TURNSocket.h"
 #import "SMMessageViewTableCell.h"
 
-@interface SMChatViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, SMMessageDelegate> {
+@interface SMChatViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, SMMessageDelegate> {
   NSMutableArray *messages;
   NSMutableArray *turnSockets;
 }

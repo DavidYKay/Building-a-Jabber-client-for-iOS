@@ -8,6 +8,7 @@
 
 #import "SMChatViewController.h"
 #import "XMPP.h"
+#import "NSString+Utils.h"
 
 
 @implementation SMChatViewController
@@ -151,7 +152,7 @@ static CGFloat padding = 20.0;
 	SMMessageViewTableCell *cell = (SMMessageViewTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	
 	if (cell == nil) {
-		cell = [[[SMMessageViewTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		cell = [[[SMMessageViewTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
 	}
 
 	NSString *sender = [s objectForKey:@"sender"];
@@ -237,7 +238,7 @@ static CGFloat padding = 20.0;
 
 #pragma mark - Chat delegates
 
-- (void)newMessageReceived:(NSDictionary *)messageContent {
+- (void)newMessageReceived:(NSMutableDictionary *)messageContent {
 	
 	NSString *m = [messageContent objectForKey:@"msg"];
 	
