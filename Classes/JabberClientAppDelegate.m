@@ -62,7 +62,7 @@
 - (BOOL)connect {
 	[self setupStream];
 	
-	NSString *jabberID = [[NSUserDefaults standardUserDefaults] stringForKey:@"userID"];
+	NSString *jabberID   = [[NSUserDefaults standardUserDefaults] stringForKey:@"userID"];
 	NSString *myPassword = [[NSUserDefaults standardUserDefaults] stringForKey:@"userPassword"];
 	
 	if (![xmppStream isDisconnected]) {
@@ -86,7 +86,6 @@
 												  otherButtonTitles:nil];
 		[alertView show];
 		[alertView release];
-		
 		
 		return NO;
 	}

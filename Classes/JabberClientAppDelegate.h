@@ -16,18 +16,9 @@
 @class SMBuddyListViewController;
 
 @interface JabberClientAppDelegate : NSObject <UIApplicationDelegate> {
-    UIWindow *window;
-    SMBuddyListViewController *viewController;
-	
-	XMPPStream *xmppStream;
-	XMPPRoster *xmppRoster;
-	
-	NSString *password;
-	
-	BOOL isOpen;
-	
-	__weak NSObject <SMChatDelegate> *_chatDelegate;
-	__weak NSObject <SMMessageDelegate> *_messageDelegate;
+  NSString *password;
+
+  BOOL isOpen;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
