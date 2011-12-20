@@ -34,8 +34,8 @@
 	[self connect];
 }
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
-    
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
 
@@ -65,35 +65,35 @@
 - (BOOL)connect {
   NSLog(@"connect");
 	[self setupStream];
-	
+
 	NSString *jabberID   = [[NSUserDefaults standardUserDefaults] stringForKey:@"userID"];
 	NSString *myPassword = [[NSUserDefaults standardUserDefaults] stringForKey:@"userPassword"];
-	
+
 	if (![xmppStream isDisconnected]) {
 		return YES;
 	}
-	
+
 	if (jabberID == nil || myPassword == nil) {
 		return NO;
 	}
-	
+
 	[xmppStream setMyJID:[XMPPJID jidWithString:jabberID]];
 	password = myPassword;
-	
+
 	NSError *error = nil;
 	if (![xmppStream connect:&error])
 	{
-		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" 
-															message:[NSString stringWithFormat:@"Can't connect to server %@", [error localizedDescription]]  
-														   delegate:nil 
-												  cancelButtonTitle:@"Ok" 
+		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+															message:[NSString stringWithFormat:@"Can't connect to server %@", [error localizedDescription]]
+														   delegate:nil
+												  cancelButtonTitle:@"Ok"
 												  otherButtonTitles:nil];
 		[alertView show];
 		[alertView release];
-		
+
 		return NO;
 	}
-	
+
 	return YES;
 }
 
@@ -105,19 +105,63 @@
 	[_chatDelegate didDisconnect];
 }
 
-#pragma mark - XMPP delegates 
+#pragma mark - XMPP delegates
+
+- (void)xmppStream:(XMPPStream *)sender willSecureWithSettings:(NSMutableDictionary *)settings {
+  NSLog(@"xmppStream:%@ willSecureWithSettings:%@", sender, settings);
+  BOOL allowSelfSignedCertificates = YES;
+
+  if (allowSelfSignedCertificates) {
+		[settings setObject:[NSNumber numberWithBool:YES] forKey:(NSString *)kCFStreamSSLAllowsAnyRoot];
+	}
+
+  BOOL allowSSLHostNameMismatch = YES;
+  if (allowSSLHostNameMismatch) {
+		[settings setObject:[NSNull null] forKey:(NSString *)kCFStreamSSLPeerName];
+	} else {
+		// Google does things incorrectly (does not conform to RFC).
+		// Because so many people ask questions about this (assume xmpp framework is broken),
+		// I've explicitly added code that shows how other xmpp clients "do the right thing"
+		// when connecting to a google server (gmail, or google apps for domains).
+
+		NSString *expectedCertName = nil;
+
+		NSString *serverDomain = xmppStream.hostName;
+		NSString *virtualDomain = [xmppStream.myJID domain];
+
+		if ([serverDomain isEqualToString:@"talk.google.com"]) {
+			if ([virtualDomain isEqualToString:@"gmail.com"]) {
+				expectedCertName = virtualDomain;
+			} else {
+				expectedCertName = serverDomain;
+			}
+		} else if (serverDomain == nil) {
+			expectedCertName = virtualDomain;
+		} else {
+			expectedCertName = serverDomain;
+		}
+
+		if (expectedCertName) {
+			[settings setObject:expectedCertName forKey:(NSString *)kCFStreamSSLPeerName];
+		}
+	}
+
+}
 
 - (void)xmppStreamDidConnect:(XMPPStream *)sender {
+  NSLog(@"xmppStreamDidConnect:%@", sender);
 	isOpen = YES;
 	NSError *error = nil;
 	[[self xmppStream] authenticateWithPassword:password error:&error];
 }
 
 - (void)xmppStreamDidAuthenticate:(XMPPStream *)sender {
+  NSLog(@"xmppStreamDidAuthenticate:%@", sender);
 	[self goOnline];
 }
 
 - (BOOL)xmppStream:(XMPPStream *)sender didReceiveIQ:(XMPPIQ *)iq {
+  NSLog(@"xmppStream:%@ didReceiveIQ: %@", sender, iq);
 	return NO;
 }
 
@@ -125,8 +169,8 @@
 	NSString *msg = [[message elementForName:@"body"] stringValue];
   NSString *from = [[message attributeForName:@"from"] stringValue];
 
-  NSLog(@"didReceiveMessage: %@ fromUser: %@", 
-      msg, 
+  NSLog(@"didReceiveMessage: %@ fromUser: %@",
+      msg,
       from
       );
   if (msg && from) {
@@ -147,7 +191,7 @@
 	NSString *myUsername = [[sender myJID] user];
   NSString *presenceFromUser = [[presence from] user];
   NSString *hisDomain = presence.from.domain;
-	
+
 	if (![presenceFromUser isEqualToString:myUsername]) {
 		if ([presenceType isEqualToString:@"available"]) {
 			[_chatDelegate newBuddyOnline:[NSString stringWithFormat:@"%@@%@", presenceFromUser, hisDomain]];
