@@ -45,21 +45,25 @@
 #pragma mark - XMPP Public Methods
 
 - (void)setupStream {
+  NSLog(@"setupStream");
 	xmppStream = [[XMPPStream alloc] init];
 	[xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
 }
 
 - (void)goOnline {
+  NSLog(@"goOnline");
 	XMPPPresence *presence = [XMPPPresence presence];
 	[[self xmppStream] sendElement:presence];
 }
 
 - (void)goOffline {
+  NSLog(@"goOffline");
 	XMPPPresence *presence = [XMPPPresence presenceWithType:@"unavailable"];
 	[[self xmppStream] sendElement:presence];
 }
 
 - (BOOL)connect {
+  NSLog(@"connect");
 	[self setupStream];
 	
 	NSString *jabberID   = [[NSUserDefaults standardUserDefaults] stringForKey:@"userID"];
@@ -94,6 +98,8 @@
 }
 
 - (void)disconnect {
+  NSLog(@"disconnect!");
+
 	[self goOffline];
 	[xmppStream disconnect];
 	[_chatDelegate didDisconnect];
@@ -136,6 +142,7 @@
 }
 
 - (void)xmppStream:(XMPPStream *)sender didReceivePresence:(XMPPPresence *)presence {
+  NSLog(@"xmppStream:%@ didReceivePresence: %@", sender, presence);
 	NSString *presenceType = [presence type]; // online/offline
 	NSString *myUsername = [[sender myJID] user];
   NSString *presenceFromUser = [[presence from] user];
