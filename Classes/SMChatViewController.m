@@ -14,6 +14,7 @@
 @implementation SMChatViewController
 
 @synthesize messageField, chatWithUser, tView;
+@synthesize keyboardToolbar;
 
 #pragma mark - Convenience Methods (unnecessary)
 
@@ -38,6 +39,8 @@
 	
 	return self;
 }
+
+#pragma mark - View Lifecycle
 
 - (void)viewDidLoad {
 
@@ -69,6 +72,55 @@
   [turnSocket release];
 
 }
+
+- (void)viewWillAppear:(BOOL)animated {
+	[super viewWillAppear:animated];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+	[super viewWillDisappear:animated];
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+}
+
+#pragma mark - IBActions
+
+- (IBAction)hideKeyboard:(id)sender {
+	//[self.textView resignFirstResponder];
+	[self.messageField resignFirstResponder];
+}
+
+#pragma mark - Notifications
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:0.3];
+	
+	CGRect frame = self.keyboardToolbar.frame;
+	frame.origin.y = self.view.frame.size.height - 260.0;
+	self.keyboardToolbar.frame = frame;
+	
+	[UIView commitAnimations];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:0.3];
+	
+	CGRect frame = self.keyboardToolbar.frame;
+	//frame.origin.y = self.view.frame.size.height;
+  frame.origin.y = self.view.frame.size.height - frame.size.height;
+
+	self.keyboardToolbar.frame = frame;
+	
+	[UIView commitAnimations];
+}
+
+#pragma mark - TURNSocket Methods
 
 - (void)turnSocket:(TURNSocket *)sender didSucceed:(GCDAsyncSocket *)socket {
 	

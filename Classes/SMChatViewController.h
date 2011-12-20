@@ -20,6 +20,7 @@
 @property (nonatomic,retain) IBOutlet UITextField *messageField;
 @property (nonatomic,retain) NSString *chatWithUser;
 @property (nonatomic,retain) IBOutlet UITableView *tView;
+@property (nonatomic,retain) IBOutlet UIView *keyboardToolbar;
 
 - (id)initWithUser:(NSString *) userName;
 - (IBAction)sendMessage;
