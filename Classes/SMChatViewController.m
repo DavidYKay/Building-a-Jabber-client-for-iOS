@@ -10,29 +10,26 @@
 #import "XMPP.h"
 #import "NSString+Utils.h"
 
-
 @implementation SMChatViewController
 
 @synthesize messageField, chatWithUser, tView;
 @synthesize keyboardToolbar;
+@synthesize chatManager = _chatManager;
 
 #pragma mark - Convenience Methods (unnecessary)
 
-- (JabberClientAppDelegate *)appDelegate {
-	return (JabberClientAppDelegate *)[[UIApplication sharedApplication] delegate];
-}
-
 - (XMPPStream *)xmppStream {
-	return [[self appDelegate] xmppStream];
+	return self.chatManager.xmppStream;
 }
 
 #pragma mark - Initialization
 
-- (id) initWithUser:(NSString *) userName {
+- (id)initWithUser:(NSString *) userName chatManager:(id <ChatManager>)chatManager {
 
   if (self = [super init]) {
     NSLog(@"Starting chat with friend: %@", userName);
-		
+    self.chatManager = chatManager;
+
 		self.chatWithUser = userName; // @ missing
 		turnSockets = [[NSMutableArray alloc] init];
 	}
@@ -53,8 +50,7 @@
 
   messages = [[NSMutableArray alloc ] init];
 
-  JabberClientAppDelegate *del = [self appDelegate];
-  del._messageDelegate = self;
+	self.chatManager.messageDelegate = self;
   [self.messageField becomeFirstResponder];
 
   //NSString *userID = [[NSUserDefaults standardUserDefaults] objectForKey:@"userID"];

@@ -11,24 +11,30 @@
 #import "XMPP.h"
 #import "XMPPRoster.h"
 
-#import "SMDirectMessageViewController.h"
-
 @implementation SMBuddyListViewController
 
 @synthesize tView, addBuddyView, buddyField;
 
+@synthesize chatManager = _chatManager;
+
 #pragma mark - Factory / Convenience
 
-- (JabberClientAppDelegate *)appDelegate {
-	return (JabberClientAppDelegate *)[[UIApplication sharedApplication] delegate];
-}
-
 - (XMPPStream *)xmppStream {
-	return [[self appDelegate] xmppStream];
+	return self.chatManager.xmppStream;
 }
 
 - (XMPPRoster *)xmppRoster {
-	return [[self appDelegate] xmppRoster];
+	return self.chatManager.xmppRoster;
+}
+
+#pragma mark - Initialization
+
+- (id)initWithChatManager:(id <ChatManager>)chatManager
+{
+  if (self = [super init]) {
+    _chatManager = chatManager;
+  }
+  return self;
 }
 
 #pragma mark - View Lifecycle
@@ -38,8 +44,8 @@
 
   self.tView.delegate = self;
   self.tView.dataSource = self;
-  JabberClientAppDelegate *del = [self appDelegate];
-  del._chatDelegate = self;
+
+  self.chatManager.chatDelegate = self;
   onlineBuddies = [[NSMutableArray alloc] init];
 }
 
@@ -49,14 +55,13 @@
 	NSString *login = [[NSUserDefaults standardUserDefaults] objectForKey:@"userID"];
 	
 	if (login) {
-		if ([[self appDelegate] connect]) {
+    if ([self.chatManager connect]) {
 			NSLog(@"show buddy list");
 		}
 	} else {
 		[self showLogin];
 	}
 }
-
 
 #pragma mark - Table view delegates
 
@@ -85,7 +90,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	NSString *userName = (NSString *) [onlineBuddies objectAtIndex:indexPath.row];
-	SMChatViewController *chatController = [[SMChatViewController alloc] initWithUser:userName];
+  SMChatViewController *chatController = [[SMChatViewController alloc] initWithUser:userName chatManager: self.chatManager];
 	[self presentModalViewController:chatController animated:YES];
 }
 
@@ -135,7 +140,6 @@
   [alert release];
 }
 
-#pragma mark -
 #pragma mark - UIAlertViewDelegate
 
 - (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -147,7 +151,7 @@
     UITextField *textField = [actionSheet textFieldAtIndex: 0];
     NSString *userName = textField.text;
 
-    SMChatViewController *chatController = [[SMChatViewController alloc] initWithUser:userName];
+    SMChatViewController *chatController = [[SMChatViewController alloc] initWithUser:userName chatManager: self.chatManager];
     [self presentModalViewController:chatController animated:YES];
   }
 }

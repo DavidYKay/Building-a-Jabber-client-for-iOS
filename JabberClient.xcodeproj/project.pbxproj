@@ -92,6 +92,7 @@
 		4252DCD4149FCE4D006441E5 /* DDXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 4252DCBB149FCE4D006441E5 /* DDXMLNode.m */; };
 		4252DCD5149FCE4D006441E5 /* libidn-1.15.tar.gz in Resources */ = {isa = PBXBuildFile; fileRef = 4252DCC0149FCE4D006441E5 /* libidn-1.15.tar.gz */; };
 		4252DCD6149FCE4D006441E5 /* libidn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4252DCC1149FCE4D006441E5 /* libidn.a */; };
+		4252DDAC14A26B01006441E5 /* SMChatManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4252DDAB14A26B00006441E5 /* SMChatManager.m */; };
 		BD0D115E141E5AEE00DF3892 /* NSString+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0D115D141E5AEE00DF3892 /* NSString+Utils.m */; };
 		BD2179311418AF2700AA58F8 /* SMMessageViewTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BD2179301418AF2700AA58F8 /* SMMessageViewTableCell.m */; };
 		BD2179361418AFA100AA58F8 /* aqua.png in Resources */ = {isa = PBXBuildFile; fileRef = BD2179341418AFA100AA58F8 /* aqua.png */; };
@@ -284,6 +285,9 @@
 		4252DCC0149FCE4D006441E5 /* libidn-1.15.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "libidn-1.15.tar.gz"; sourceTree = "<group>"; };
 		4252DCC1149FCE4D006441E5 /* libidn.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libidn.a; sourceTree = "<group>"; };
 		4252DCC2149FCE4D006441E5 /* stringprep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringprep.h; sourceTree = "<group>"; };
+		4252DDAA14A26B00006441E5 /* SMChatManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMChatManager.h; sourceTree = "<group>"; };
+		4252DDAB14A26B00006441E5 /* SMChatManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMChatManager.m; sourceTree = "<group>"; };
+		4252DDAD14A27CF6006441E5 /* ChatManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatManager.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* JabberClient-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "JabberClient-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		BD0D115C141E5AEE00DF3892 /* NSString+Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utils.h"; sourceTree = "<group>"; };
 		BD0D115D141E5AEE00DF3892 /* NSString+Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utils.m"; sourceTree = "<group>"; };
@@ -331,23 +335,13 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				4252DDA814A26ABA006441E5 /* Additions */,
+				4252DDA614A26AAE006441E5 /* ViewControllers */,
+				4252DDA914A26AC7006441E5 /* Protocols */,
 				1D3623240D0F684500981E51 /* JabberClientAppDelegate.h */,
 				1D3623250D0F684500981E51 /* JabberClientAppDelegate.m */,
-				28D7ACF60DDB3853001CB0EB /* SMBuddyListViewController.h */,
-				28D7ACF70DDB3853001CB0EB /* SMBuddyListViewController.m */,
-				2899E5210DE3E06400AC0155 /* JabberClientViewController.xib */,
-				BD62310813E9626F00F26E0B /* SMLoginViewController.h */,
-				BD62310913E9626F00F26E0B /* SMLoginViewController.m */,
-				BD62310A13E9626F00F26E0B /* SMLoginViewController.xib */,
-				BD62310F13E9628700F26E0B /* SMChatDelegate.h */,
-				BD62311013E9629700F26E0B /* SMMessageDelegate.h */,
-				BD62316B13E964BA00F26E0B /* SMChatViewController.xib */,
-				BD62316C13E964BA00F26E0B /* SMChatViewController.h */,
-				BD62316D13E964BA00F26E0B /* SMChatViewController.m */,
-				BD21792F1418AF2700AA58F8 /* SMMessageViewTableCell.h */,
-				BD2179301418AF2700AA58F8 /* SMMessageViewTableCell.m */,
-				BD0D115C141E5AEE00DF3892 /* NSString+Utils.h */,
-				BD0D115D141E5AEE00DF3892 /* NSString+Utils.m */,
+				4252DDAA14A26B00006441E5 /* SMChatManager.h */,
+				4252DDAB14A26B00006441E5 /* SMChatManager.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -820,6 +814,43 @@
 			path = libidn;
 			sourceTree = "<group>";
 		};
+		4252DDA614A26AAE006441E5 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				28D7ACF60DDB3853001CB0EB /* SMBuddyListViewController.h */,
+				28D7ACF70DDB3853001CB0EB /* SMBuddyListViewController.m */,
+				2899E5210DE3E06400AC0155 /* JabberClientViewController.xib */,
+				BD62310813E9626F00F26E0B /* SMLoginViewController.h */,
+				BD62310913E9626F00F26E0B /* SMLoginViewController.m */,
+				BD62310A13E9626F00F26E0B /* SMLoginViewController.xib */,
+				BD62316B13E964BA00F26E0B /* SMChatViewController.xib */,
+				BD62316C13E964BA00F26E0B /* SMChatViewController.h */,
+				BD62316D13E964BA00F26E0B /* SMChatViewController.m */,
+				BD21792F1418AF2700AA58F8 /* SMMessageViewTableCell.h */,
+				BD2179301418AF2700AA58F8 /* SMMessageViewTableCell.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		4252DDA814A26ABA006441E5 /* Additions */ = {
+			isa = PBXGroup;
+			children = (
+				BD0D115C141E5AEE00DF3892 /* NSString+Utils.h */,
+				BD0D115D141E5AEE00DF3892 /* NSString+Utils.m */,
+			);
+			name = Additions;
+			sourceTree = "<group>";
+		};
+		4252DDA914A26AC7006441E5 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				BD62310F13E9628700F26E0B /* SMChatDelegate.h */,
+				BD62311013E9629700F26E0B /* SMMessageDelegate.h */,
+				4252DDAD14A27CF6006441E5 /* ChatManager.h */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
 		BD622FD713E95B7E00F26E0B /* xmpp */ = {
 			isa = PBXGroup;
 			children = (
@@ -983,6 +1014,7 @@
 				4252DCD2149FCE4D006441E5 /* DDXMLDocument.m in Sources */,
 				4252DCD3149FCE4D006441E5 /* DDXMLElement.m in Sources */,
 				4252DCD4149FCE4D006441E5 /* DDXMLNode.m in Sources */,
+				4252DDAC14A26B01006441E5 /* SMChatManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
