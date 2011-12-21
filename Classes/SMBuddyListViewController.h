@@ -32,6 +32,7 @@
 
 - (IBAction) addBuddy;
 - (IBAction) showLogin;
+- (IBAction) directMessage;
 
 
 @end
